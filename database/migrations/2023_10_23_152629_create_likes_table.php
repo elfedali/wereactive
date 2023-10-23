@@ -11,13 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::disableForeignKeyConstraints();
+
+        Schema::create('likes', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
-            $table->string('description')->nullable();
-            $table->boolean('done')->nullable();
+            $table->foreignId('user_id')->constrained();
+            $table->unsignedBigInteger('likeable_id');
+            $table->string('likeable_type');
             $table->timestamps();
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('likes');
     }
 };

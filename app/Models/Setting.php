@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Task extends Model
+class Setting extends Model
 {
     use HasFactory;
 
@@ -16,10 +15,8 @@ class Task extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
-        'title',
-        'description',
-        'done',
+        'key',
+        'value',
     ];
 
     /**
@@ -29,12 +26,5 @@ class Task extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'user_id' => 'integer',
-        'done' => 'boolean',
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }

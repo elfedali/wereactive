@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\Task;
+use App\Models\Favorite;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -10,9 +10,9 @@ use JMac\Testing\Traits\AdditionalAssertions;
 use Tests\TestCase;
 
 /**
- * @see \App\Http\Controllers\TaskController
+ * @see \App\Http\Controllers\FavoriteController
  */
-class TaskControllerTest extends TestCase
+class FavoriteControllerTest extends TestCase
 {
     use AdditionalAssertions, RefreshDatabase, WithFaker;
 
@@ -21,9 +21,9 @@ class TaskControllerTest extends TestCase
      */
     public function index_behaves_as_expected(): void
     {
-        $tasks = Task::factory()->count(3)->create();
+        $favorites = Favorite::factory()->count(3)->create();
 
-        $response = $this->get(route('task.index'));
+        $response = $this->get(route('favorite.index'));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -36,9 +36,9 @@ class TaskControllerTest extends TestCase
     public function store_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\FavoriteController::class,
             'store',
-            \App\Http\Requests\TaskStoreRequest::class
+            \App\Http\Requests\FavoriteStoreRequest::class
         );
     }
 
@@ -49,15 +49,15 @@ class TaskControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post(route('task.store'), [
+        $response = $this->post(route('favorite.store'), [
             'user_id' => $user->id,
         ]);
 
-        $tasks = Task::query()
+        $favorites = Favorite::query()
             ->where('user_id', $user->id)
             ->get();
-        $this->assertCount(1, $tasks);
-        $task = $tasks->first();
+        $this->assertCount(1, $favorites);
+        $favorite = $favorites->first();
 
         $response->assertCreated();
         $response->assertJsonStructure([]);
@@ -69,9 +69,9 @@ class TaskControllerTest extends TestCase
      */
     public function show_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $favorite = Favorite::factory()->create();
 
-        $response = $this->get(route('task.show', $task));
+        $response = $this->get(route('favorite.show', $favorite));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -84,9 +84,9 @@ class TaskControllerTest extends TestCase
     public function update_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\FavoriteController::class,
             'update',
-            \App\Http\Requests\TaskUpdateRequest::class
+            \App\Http\Requests\FavoriteUpdateRequest::class
         );
     }
 
@@ -95,19 +95,19 @@ class TaskControllerTest extends TestCase
      */
     public function update_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $favorite = Favorite::factory()->create();
         $user = User::factory()->create();
 
-        $response = $this->put(route('task.update', $task), [
+        $response = $this->put(route('favorite.update', $favorite), [
             'user_id' => $user->id,
         ]);
 
-        $task->refresh();
+        $favorite->refresh();
 
         $response->assertOk();
         $response->assertJsonStructure([]);
 
-        $this->assertEquals($user->id, $task->user_id);
+        $this->assertEquals($user->id, $favorite->user_id);
     }
 
 
@@ -116,12 +116,12 @@ class TaskControllerTest extends TestCase
      */
     public function destroy_deletes_and_responds_with(): void
     {
-        $task = Task::factory()->create();
+        $favorite = Favorite::factory()->create();
 
-        $response = $this->delete(route('task.destroy', $task));
+        $response = $this->delete(route('favorite.destroy', $favorite));
 
         $response->assertNoContent();
 
-        $this->assertModelMissing($task);
+        $this->assertModelMissing($favorite);
     }
 }

@@ -4,6 +4,7 @@ models:
     title: string nullable
     description: string nullable
     done: boolean nullable
+
   Category:
     title: string nullable
     slug: string unique
@@ -81,53 +82,29 @@ models:
         
 
 #     # ...  
-# controllers:
+controllers:
+  Task:
+    resource: api
 
-#   Task:
-#     resource: api
+  Category:
+    resource: api
 
-#   Category:
-#     resource: api
+  Product:
+    resource: api  
 
-#   Productt:
-#     resource: api  
+  Shop:
+    resource: api
 
-#   Shop:
-#     resource: api
+  Like:
+    resource: api
 
-#   Like:
-#     resource: api
+  Favorite:
+    resource: api
 
-#   Favorite:
-#     resource: api
+  Image:
+    resource: api
 
-#   Image:
-#     resource: api
-
-#   Order:
-#     resource: api
-#   Setting:
-#     resource: api 
-
-#   Admin/Task:
-#     resource
-#   Admin/Category:
-#     resource
-#   Admin/Product:
-#     resource
-#   Admin/Shop:
-#     resource
-#   Admin/Like:
-#     resource
-#   Admin/Favorite:
-#     resource
-#   Admin/Image:
-#     resource
-#   Admin/Order:
-#     resource
-#   Admin/Setting:
-#     resource
-#   Admin/User:
-#     resource
-                          
-            
+  Order:
+    resource: api
+  Setting:
+    resource: api

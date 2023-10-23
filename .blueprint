@@ -1,15 +1,94 @@
 created:
     - app/Http/Controllers/TaskController.php
+    - app/Http/Controllers/CategoryController.php
+    - app/Http/Controllers/ProductController.php
+    - app/Http/Controllers/ShopController.php
+    - app/Http/Controllers/LikeController.php
+    - app/Http/Controllers/FavoriteController.php
+    - app/Http/Controllers/ImageController.php
+    - app/Http/Controllers/OrderController.php
+    - app/Http/Controllers/SettingController.php
     - database/factories/TaskFactory.php
-    - database/migrations/2023_10_23_103657_create_tasks_table.php
+    - database/factories/CategoryFactory.php
+    - database/factories/ShopFactory.php
+    - database/factories/ProductFactory.php
+    - database/factories/LikeFactory.php
+    - database/factories/FavoriteFactory.php
+    - database/factories/ImageFactory.php
+    - database/factories/OrderFactory.php
+    - database/factories/OrderItemFactory.php
+    - database/factories/SettingFactory.php
+    - database/migrations/2023_10_23_152625_create_tasks_table.php
+    - database/migrations/2023_10_23_152626_create_categories_table.php
+    - database/migrations/2023_10_23_152627_create_shops_table.php
+    - database/migrations/2023_10_23_152628_create_products_table.php
+    - database/migrations/2023_10_23_152629_create_likes_table.php
+    - database/migrations/2023_10_23_152630_create_favorites_table.php
+    - database/migrations/2023_10_23_152631_create_images_table.php
+    - database/migrations/2023_10_23_152632_create_orders_table.php
+    - database/migrations/2023_10_23_152633_create_order_items_table.php
+    - database/migrations/2023_10_23_152634_create_settings_table.php
     - app/Models/Task.php
+    - app/Models/Category.php
+    - app/Models/Shop.php
+    - app/Models/Product.php
+    - app/Models/Like.php
+    - app/Models/Favorite.php
+    - app/Models/Image.php
+    - app/Models/Order.php
+    - app/Models/OrderItem.php
+    - app/Models/Setting.php
     - tests/Feature/Http/Controllers/TaskControllerTest.php
-    - app/Http/Requests/TaskStoreRequest.php
-    - app/Http/Requests/TaskUpdateRequest.php
-    - app/Http/Resources/TaskCollection.php
-    - app/Http/Resources/TaskResource.php
+    - tests/Feature/Http/Controllers/CategoryControllerTest.php
+    - tests/Feature/Http/Controllers/ProductControllerTest.php
+    - tests/Feature/Http/Controllers/ShopControllerTest.php
+    - tests/Feature/Http/Controllers/LikeControllerTest.php
+    - tests/Feature/Http/Controllers/FavoriteControllerTest.php
+    - tests/Feature/Http/Controllers/ImageControllerTest.php
+    - tests/Feature/Http/Controllers/OrderControllerTest.php
+    - tests/Feature/Http/Controllers/SettingControllerTest.php
+    - app/Http/Requests/CategoryStoreRequest.php
+    - app/Http/Requests/CategoryUpdateRequest.php
+    - app/Http/Requests/ProductStoreRequest.php
+    - app/Http/Requests/ProductUpdateRequest.php
+    - app/Http/Requests/ShopStoreRequest.php
+    - app/Http/Requests/ShopUpdateRequest.php
+    - app/Http/Requests/LikeStoreRequest.php
+    - app/Http/Requests/LikeUpdateRequest.php
+    - app/Http/Requests/FavoriteStoreRequest.php
+    - app/Http/Requests/FavoriteUpdateRequest.php
+    - app/Http/Requests/ImageStoreRequest.php
+    - app/Http/Requests/ImageUpdateRequest.php
+    - app/Http/Requests/OrderStoreRequest.php
+    - app/Http/Requests/OrderUpdateRequest.php
+    - app/Http/Requests/SettingStoreRequest.php
+    - app/Http/Requests/SettingUpdateRequest.php
+    - app/Http/Resources/CategoryCollection.php
+    - app/Http/Resources/CategoryResource.php
+    - app/Http/Resources/ProductCollection.php
+    - app/Http/Resources/ProductResource.php
+    - app/Http/Resources/ShopCollection.php
+    - app/Http/Resources/ShopResource.php
+    - app/Http/Resources/LikeCollection.php
+    - app/Http/Resources/LikeResource.php
+    - app/Http/Resources/FavoriteCollection.php
+    - app/Http/Resources/FavoriteResource.php
+    - app/Http/Resources/ImageCollection.php
+    - app/Http/Resources/ImageResource.php
+    - app/Http/Resources/OrderCollection.php
+    - app/Http/Resources/OrderResource.php
+    - app/Http/Resources/SettingCollection.php
+    - app/Http/Resources/SettingResource.php
 updated:
     - routes/api.php
 models:
-    User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, remember_token: 'string nullable' }
-    Task: { title: 'string nullable', description: 'string nullable', done: 'boolean nullable' }
+    Task: { user_id: 'id foreign:users', title: 'string nullable', description: 'string nullable', done: 'boolean nullable' }
+    Category: { title: 'string nullable', slug: 'string unique', description: 'string nullable', priority: 'integer nullable default:0', relationships: { hasMany: Product } }
+    Shop: { name: 'string nullable', slug: 'string unique', description: 'text nullable', address: 'string nullable', phone: 'string nullable', email: 'string nullable', website: 'string nullable', relationships: { hasMany: Product, morphMany: 'Image, Like, Favorite' } }
+    Product: { title: 'string nullable', slug: 'string unique', description: 'text nullable', price: 'float nullable', quantity: 'integer nullable', on_sale: 'boolean default:false', sale_price: 'float nullable', sale_start: 'datetime nullable', sale_end: 'datetime nullable', is_featured: 'boolean default:false', active: 'boolean default:true', relationships: { hasMany: Category, morphMany: 'Image, Like, Favorite' } }
+    Like: { user_id: 'id foreign:users', relationships: { morphTo: Likeable } }
+    Favorite: { user_id: 'id foreign:users', relationships: { morphTo: Favoritable } }
+    Image: { user_id: 'id foreign:users', name: 'string nullable', path: string, relationships: { morphTo: Imageable } }
+    Order: { user_id: 'id foreign:users', shop_id: 'id foreign:shops', status: 'enum:pending,processing,completed,cancelled default:pending', shipping_address: 'string nullable', shipping_phone: 'string nullable', shipping_email: 'string nullable', shipping_name: 'string nullable', shipping_city: 'string nullable', shipping_country: 'string nullable', shipping_zip: 'string nullable', shipping_state: 'string nullable', shipping_indications: 'string nullable', tax: 'float nullable', sub_total: 'float nullable', total: 'float nullable', relationships: { hasMany: OrderItem } }
+    OrderItem: { order_id: 'id foreign:orders', product_id: 'id foreign:products', quantity: 'integer nullable', price: 'float nullable' }
+    Setting: { key: 'string unique', value: 'string nullable' }

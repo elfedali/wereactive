@@ -2,17 +2,16 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\Task;
-use App\Models\User;
+use App\Models\Shop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use JMac\Testing\Traits\AdditionalAssertions;
 use Tests\TestCase;
 
 /**
- * @see \App\Http\Controllers\TaskController
+ * @see \App\Http\Controllers\ShopController
  */
-class TaskControllerTest extends TestCase
+class ShopControllerTest extends TestCase
 {
     use AdditionalAssertions, RefreshDatabase, WithFaker;
 
@@ -21,9 +20,9 @@ class TaskControllerTest extends TestCase
      */
     public function index_behaves_as_expected(): void
     {
-        $tasks = Task::factory()->count(3)->create();
+        $shops = Shop::factory()->count(3)->create();
 
-        $response = $this->get(route('task.index'));
+        $response = $this->get(route('shop.index'));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -36,9 +35,9 @@ class TaskControllerTest extends TestCase
     public function store_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\ShopController::class,
             'store',
-            \App\Http\Requests\TaskStoreRequest::class
+            \App\Http\Requests\ShopStoreRequest::class
         );
     }
 
@@ -47,17 +46,17 @@ class TaskControllerTest extends TestCase
      */
     public function store_saves(): void
     {
-        $user = User::factory()->create();
+        $slug = $this->faker->slug;
 
-        $response = $this->post(route('task.store'), [
-            'user_id' => $user->id,
+        $response = $this->post(route('shop.store'), [
+            'slug' => $slug,
         ]);
 
-        $tasks = Task::query()
-            ->where('user_id', $user->id)
+        $shops = Shop::query()
+            ->where('slug', $slug)
             ->get();
-        $this->assertCount(1, $tasks);
-        $task = $tasks->first();
+        $this->assertCount(1, $shops);
+        $shop = $shops->first();
 
         $response->assertCreated();
         $response->assertJsonStructure([]);
@@ -69,9 +68,9 @@ class TaskControllerTest extends TestCase
      */
     public function show_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $shop = Shop::factory()->create();
 
-        $response = $this->get(route('task.show', $task));
+        $response = $this->get(route('shop.show', $shop));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -84,9 +83,9 @@ class TaskControllerTest extends TestCase
     public function update_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\ShopController::class,
             'update',
-            \App\Http\Requests\TaskUpdateRequest::class
+            \App\Http\Requests\ShopUpdateRequest::class
         );
     }
 
@@ -95,19 +94,19 @@ class TaskControllerTest extends TestCase
      */
     public function update_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
-        $user = User::factory()->create();
+        $shop = Shop::factory()->create();
+        $slug = $this->faker->slug;
 
-        $response = $this->put(route('task.update', $task), [
-            'user_id' => $user->id,
+        $response = $this->put(route('shop.update', $shop), [
+            'slug' => $slug,
         ]);
 
-        $task->refresh();
+        $shop->refresh();
 
         $response->assertOk();
         $response->assertJsonStructure([]);
 
-        $this->assertEquals($user->id, $task->user_id);
+        $this->assertEquals($slug, $shop->slug);
     }
 
 
@@ -116,12 +115,12 @@ class TaskControllerTest extends TestCase
      */
     public function destroy_deletes_and_responds_with(): void
     {
-        $task = Task::factory()->create();
+        $shop = Shop::factory()->create();
 
-        $response = $this->delete(route('task.destroy', $task));
+        $response = $this->delete(route('shop.destroy', $shop));
 
         $response->assertNoContent();
 
-        $this->assertModelMissing($task);
+        $this->assertModelMissing($shop);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\Task;
+use App\Models\Image;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -10,9 +10,9 @@ use JMac\Testing\Traits\AdditionalAssertions;
 use Tests\TestCase;
 
 /**
- * @see \App\Http\Controllers\TaskController
+ * @see \App\Http\Controllers\ImageController
  */
-class TaskControllerTest extends TestCase
+class ImageControllerTest extends TestCase
 {
     use AdditionalAssertions, RefreshDatabase, WithFaker;
 
@@ -21,9 +21,9 @@ class TaskControllerTest extends TestCase
      */
     public function index_behaves_as_expected(): void
     {
-        $tasks = Task::factory()->count(3)->create();
+        $images = Image::factory()->count(3)->create();
 
-        $response = $this->get(route('task.index'));
+        $response = $this->get(route('image.index'));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -36,9 +36,9 @@ class TaskControllerTest extends TestCase
     public function store_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\ImageController::class,
             'store',
-            \App\Http\Requests\TaskStoreRequest::class
+            \App\Http\Requests\ImageStoreRequest::class
         );
     }
 
@@ -48,16 +48,19 @@ class TaskControllerTest extends TestCase
     public function store_saves(): void
     {
         $user = User::factory()->create();
+        $path = $this->faker->word;
 
-        $response = $this->post(route('task.store'), [
+        $response = $this->post(route('image.store'), [
             'user_id' => $user->id,
+            'path' => $path,
         ]);
 
-        $tasks = Task::query()
+        $images = Image::query()
             ->where('user_id', $user->id)
+            ->where('path', $path)
             ->get();
-        $this->assertCount(1, $tasks);
-        $task = $tasks->first();
+        $this->assertCount(1, $images);
+        $image = $images->first();
 
         $response->assertCreated();
         $response->assertJsonStructure([]);
@@ -69,9 +72,9 @@ class TaskControllerTest extends TestCase
      */
     public function show_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $image = Image::factory()->create();
 
-        $response = $this->get(route('task.show', $task));
+        $response = $this->get(route('image.show', $image));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -84,9 +87,9 @@ class TaskControllerTest extends TestCase
     public function update_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\ImageController::class,
             'update',
-            \App\Http\Requests\TaskUpdateRequest::class
+            \App\Http\Requests\ImageUpdateRequest::class
         );
     }
 
@@ -95,19 +98,22 @@ class TaskControllerTest extends TestCase
      */
     public function update_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $image = Image::factory()->create();
         $user = User::factory()->create();
+        $path = $this->faker->word;
 
-        $response = $this->put(route('task.update', $task), [
+        $response = $this->put(route('image.update', $image), [
             'user_id' => $user->id,
+            'path' => $path,
         ]);
 
-        $task->refresh();
+        $image->refresh();
 
         $response->assertOk();
         $response->assertJsonStructure([]);
 
-        $this->assertEquals($user->id, $task->user_id);
+        $this->assertEquals($user->id, $image->user_id);
+        $this->assertEquals($path, $image->path);
     }
 
 
@@ -116,12 +122,12 @@ class TaskControllerTest extends TestCase
      */
     public function destroy_deletes_and_responds_with(): void
     {
-        $task = Task::factory()->create();
+        $image = Image::factory()->create();
 
-        $response = $this->delete(route('task.destroy', $task));
+        $response = $this->delete(route('image.destroy', $image));
 
         $response->assertNoContent();
 
-        $this->assertModelMissing($task);
+        $this->assertModelMissing($image);
     }
 }

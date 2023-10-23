@@ -2,7 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\Task;
+use App\Models\Order;
+use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -10,9 +11,9 @@ use JMac\Testing\Traits\AdditionalAssertions;
 use Tests\TestCase;
 
 /**
- * @see \App\Http\Controllers\TaskController
+ * @see \App\Http\Controllers\OrderController
  */
-class TaskControllerTest extends TestCase
+class OrderControllerTest extends TestCase
 {
     use AdditionalAssertions, RefreshDatabase, WithFaker;
 
@@ -21,9 +22,9 @@ class TaskControllerTest extends TestCase
      */
     public function index_behaves_as_expected(): void
     {
-        $tasks = Task::factory()->count(3)->create();
+        $orders = Order::factory()->count(3)->create();
 
-        $response = $this->get(route('task.index'));
+        $response = $this->get(route('order.index'));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -36,9 +37,9 @@ class TaskControllerTest extends TestCase
     public function store_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\OrderController::class,
             'store',
-            \App\Http\Requests\TaskStoreRequest::class
+            \App\Http\Requests\OrderStoreRequest::class
         );
     }
 
@@ -48,16 +49,22 @@ class TaskControllerTest extends TestCase
     public function store_saves(): void
     {
         $user = User::factory()->create();
+        $shop = Shop::factory()->create();
+        $status = $this->faker->randomElement(/** enum_attributes **/);
 
-        $response = $this->post(route('task.store'), [
+        $response = $this->post(route('order.store'), [
             'user_id' => $user->id,
+            'shop_id' => $shop->id,
+            'status' => $status,
         ]);
 
-        $tasks = Task::query()
+        $orders = Order::query()
             ->where('user_id', $user->id)
+            ->where('shop_id', $shop->id)
+            ->where('status', $status)
             ->get();
-        $this->assertCount(1, $tasks);
-        $task = $tasks->first();
+        $this->assertCount(1, $orders);
+        $order = $orders->first();
 
         $response->assertCreated();
         $response->assertJsonStructure([]);
@@ -69,9 +76,9 @@ class TaskControllerTest extends TestCase
      */
     public function show_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $order = Order::factory()->create();
 
-        $response = $this->get(route('task.show', $task));
+        $response = $this->get(route('order.show', $order));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -84,9 +91,9 @@ class TaskControllerTest extends TestCase
     public function update_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\OrderController::class,
             'update',
-            \App\Http\Requests\TaskUpdateRequest::class
+            \App\Http\Requests\OrderUpdateRequest::class
         );
     }
 
@@ -95,19 +102,25 @@ class TaskControllerTest extends TestCase
      */
     public function update_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $order = Order::factory()->create();
         $user = User::factory()->create();
+        $shop = Shop::factory()->create();
+        $status = $this->faker->randomElement(/** enum_attributes **/);
 
-        $response = $this->put(route('task.update', $task), [
+        $response = $this->put(route('order.update', $order), [
             'user_id' => $user->id,
+            'shop_id' => $shop->id,
+            'status' => $status,
         ]);
 
-        $task->refresh();
+        $order->refresh();
 
         $response->assertOk();
         $response->assertJsonStructure([]);
 
-        $this->assertEquals($user->id, $task->user_id);
+        $this->assertEquals($user->id, $order->user_id);
+        $this->assertEquals($shop->id, $order->shop_id);
+        $this->assertEquals($status, $order->status);
     }
 
 
@@ -116,12 +129,12 @@ class TaskControllerTest extends TestCase
      */
     public function destroy_deletes_and_responds_with(): void
     {
-        $task = Task::factory()->create();
+        $order = Order::factory()->create();
 
-        $response = $this->delete(route('task.destroy', $task));
+        $response = $this->delete(route('order.destroy', $order));
 
         $response->assertNoContent();
 
-        $this->assertModelMissing($task);
+        $this->assertModelMissing($order);
     }
 }

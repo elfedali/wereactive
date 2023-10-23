@@ -4,17 +4,16 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\Task;
-use App\Models\User;
+use App\Models\Category;
 
-class TaskFactory extends Factory
+class CategoryFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Task::class;
+    protected $model = Category::class;
 
     /**
      * Define the model's default state.
@@ -22,10 +21,10 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
             'title' => $this->faker->sentence(4),
+            'slug' => $this->faker->slug,
             'description' => $this->faker->text,
-            'done' => $this->faker->boolean,
+            'priority' => $this->faker->numberBetween(-10000, 10000),
         ];
     }
 }

@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Task extends Model
+class Favorite extends Model
 {
     use HasFactory;
 
@@ -17,9 +18,6 @@ class Task extends Model
      */
     protected $fillable = [
         'user_id',
-        'title',
-        'description',
-        'done',
     ];
 
     /**
@@ -30,8 +28,12 @@ class Task extends Model
     protected $casts = [
         'id' => 'integer',
         'user_id' => 'integer',
-        'done' => 'boolean',
     ];
+
+    public function favoritable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 
     public function user(): BelongsTo
     {

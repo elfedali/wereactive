@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\Task;
+use App\Models\Like;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -10,9 +10,9 @@ use JMac\Testing\Traits\AdditionalAssertions;
 use Tests\TestCase;
 
 /**
- * @see \App\Http\Controllers\TaskController
+ * @see \App\Http\Controllers\LikeController
  */
-class TaskControllerTest extends TestCase
+class LikeControllerTest extends TestCase
 {
     use AdditionalAssertions, RefreshDatabase, WithFaker;
 
@@ -21,9 +21,9 @@ class TaskControllerTest extends TestCase
      */
     public function index_behaves_as_expected(): void
     {
-        $tasks = Task::factory()->count(3)->create();
+        $likes = Like::factory()->count(3)->create();
 
-        $response = $this->get(route('task.index'));
+        $response = $this->get(route('like.index'));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -36,9 +36,9 @@ class TaskControllerTest extends TestCase
     public function store_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\LikeController::class,
             'store',
-            \App\Http\Requests\TaskStoreRequest::class
+            \App\Http\Requests\LikeStoreRequest::class
         );
     }
 
@@ -49,15 +49,15 @@ class TaskControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post(route('task.store'), [
+        $response = $this->post(route('like.store'), [
             'user_id' => $user->id,
         ]);
 
-        $tasks = Task::query()
+        $likes = Like::query()
             ->where('user_id', $user->id)
             ->get();
-        $this->assertCount(1, $tasks);
-        $task = $tasks->first();
+        $this->assertCount(1, $likes);
+        $like = $likes->first();
 
         $response->assertCreated();
         $response->assertJsonStructure([]);
@@ -69,9 +69,9 @@ class TaskControllerTest extends TestCase
      */
     public function show_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $like = Like::factory()->create();
 
-        $response = $this->get(route('task.show', $task));
+        $response = $this->get(route('like.show', $like));
 
         $response->assertOk();
         $response->assertJsonStructure([]);
@@ -84,9 +84,9 @@ class TaskControllerTest extends TestCase
     public function update_uses_form_request_validation(): void
     {
         $this->assertActionUsesFormRequest(
-            \App\Http\Controllers\TaskController::class,
+            \App\Http\Controllers\LikeController::class,
             'update',
-            \App\Http\Requests\TaskUpdateRequest::class
+            \App\Http\Requests\LikeUpdateRequest::class
         );
     }
 
@@ -95,19 +95,19 @@ class TaskControllerTest extends TestCase
      */
     public function update_behaves_as_expected(): void
     {
-        $task = Task::factory()->create();
+        $like = Like::factory()->create();
         $user = User::factory()->create();
 
-        $response = $this->put(route('task.update', $task), [
+        $response = $this->put(route('like.update', $like), [
             'user_id' => $user->id,
         ]);
 
-        $task->refresh();
+        $like->refresh();
 
         $response->assertOk();
         $response->assertJsonStructure([]);
 
-        $this->assertEquals($user->id, $task->user_id);
+        $this->assertEquals($user->id, $like->user_id);
     }
 
 
@@ -116,12 +116,12 @@ class TaskControllerTest extends TestCase
      */
     public function destroy_deletes_and_responds_with(): void
     {
-        $task = Task::factory()->create();
+        $like = Like::factory()->create();
 
-        $response = $this->delete(route('task.destroy', $task));
+        $response = $this->delete(route('like.destroy', $like));
 
         $response->assertNoContent();
 
-        $this->assertModelMissing($task);
+        $this->assertModelMissing($like);
     }
 }

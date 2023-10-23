@@ -4,17 +4,16 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\Task;
-use App\Models\User;
+use App\Models\Shop;
 
-class TaskFactory extends Factory
+class ShopFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Task::class;
+    protected $model = Shop::class;
 
     /**
      * Define the model's default state.
@@ -22,10 +21,13 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'title' => $this->faker->sentence(4),
+            'name' => $this->faker->name,
+            'slug' => $this->faker->slug,
             'description' => $this->faker->text,
-            'done' => $this->faker->boolean,
+            'address' => $this->faker->word,
+            'phone' => $this->faker->phoneNumber,
+            'email' => $this->faker->safeEmail,
+            'website' => $this->faker->word,
         ];
     }
 }

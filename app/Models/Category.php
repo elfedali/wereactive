@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Task extends Model
+class Category extends Model
 {
     use HasFactory;
 
@@ -16,10 +16,10 @@ class Task extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
         'title',
+        'slug',
         'description',
-        'done',
+        'priority',
     ];
 
     /**
@@ -29,12 +29,10 @@ class Task extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'user_id' => 'integer',
-        'done' => 'boolean',
     ];
 
-    public function user(): BelongsTo
+    public function products(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Product::class);
     }
 }
