@@ -1,0 +1,9 @@
+models:
+  Task:
+    title: string nullable
+    description: string nullable
+    done: boolean nullable
+controllers:
+  Task:
+    resource: api
+  # ...

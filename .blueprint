@@ -1,0 +1,15 @@
+created:
+    - app/Http/Controllers/TaskController.php
+    - database/factories/TaskFactory.php
+    - database/migrations/2023_10_23_103657_create_tasks_table.php
+    - app/Models/Task.php
+    - tests/Feature/Http/Controllers/TaskControllerTest.php
+    - app/Http/Requests/TaskStoreRequest.php
+    - app/Http/Requests/TaskUpdateRequest.php
+    - app/Http/Resources/TaskCollection.php
+    - app/Http/Resources/TaskResource.php
+updated:
+    - routes/api.php
+models:
+    User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, remember_token: 'string nullable' }
+    Task: { title: 'string nullable', description: 'string nullable', done: 'boolean nullable' }
