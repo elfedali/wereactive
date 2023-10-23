@@ -1,9 +1,133 @@
 models:
   Task:
+    user_id: id foreign:users
     title: string nullable
     description: string nullable
     done: boolean nullable
-controllers:
-  Task:
-    resource: api
-  # ...
+  Category:
+    title: string nullable
+    slug: string unique
+    description: string nullable
+    priority: integer nullable default:0
+    relationships:
+      hasMany: Product
+  Shop:
+    name: string nullable
+    slug: string unique 
+    description: text nullable
+    address: string nullable
+    phone: string nullable
+    email: string nullable
+    website: string nullable
+    relationships:
+      hasMany: Product  
+      morphMany: Image, Like, Favorite
+  Product:
+    title: string nullable
+    slug: string unique
+    description: text nullable
+    price: float nullable
+    quantity: integer nullable
+    on_sale: boolean default:false
+    sale_price: float nullable
+    sale_start: datetime nullable
+    sale_end: datetime nullable
+    is_featured: boolean default:false
+    active: boolean default:true
+    relationships:
+      hasMany: Category
+      morphMany: Image, Like, Favorite
+  
+  Like:
+    user_id: id foreign:users
+    relationships:
+      morphTo: Likeable
+  Favorite:
+    user_id: id foreign:users
+    relationships:
+      morphTo: Favoritable
+  Image:
+    user_id: id foreign:users
+    name: string nullable
+    path: string 
+    relationships:
+      morphTo: Imageable  
+  Order:
+    user_id: id foreign:users
+    shop_id: id foreign:shops
+    status: enum:pending,processing,completed,cancelled default:pending 
+    shipping_address: string nullable
+    shipping_phone: string nullable
+    shipping_email: string nullable
+    shipping_name: string nullable
+    shipping_city: string nullable
+    shipping_country: string nullable
+    shipping_zip: string nullable
+    shipping_state: string nullable
+    shipping_indications: string nullable
+    tax: float nullable
+    sub_total: float nullable
+    total: float nullable
+    relationships:
+      hasMany: OrderItem
+  OrderItem:
+    order_id: id foreign:orders
+    product_id: id foreign:products
+    quantity: integer nullable
+    price: float nullable
+  Setting:
+    key: string unique
+    value: string nullable  
+        
+
+#     # ...  
+# controllers:
+
+#   Task:
+#     resource: api
+
+#   Category:
+#     resource: api
+
+#   Productt:
+#     resource: api  
+
+#   Shop:
+#     resource: api
+
+#   Like:
+#     resource: api
+
+#   Favorite:
+#     resource: api
+
+#   Image:
+#     resource: api
+
+#   Order:
+#     resource: api
+#   Setting:
+#     resource: api 
+
+#   Admin/Task:
+#     resource
+#   Admin/Category:
+#     resource
+#   Admin/Product:
+#     resource
+#   Admin/Shop:
+#     resource
+#   Admin/Like:
+#     resource
+#   Admin/Favorite:
+#     resource
+#   Admin/Image:
+#     resource
+#   Admin/Order:
+#     resource
+#   Admin/Setting:
+#     resource
+#   Admin/User:
+#     resource
+                          
+            
